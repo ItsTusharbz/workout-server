@@ -1,4 +1,4 @@
-const { Day } = require("../model/DayModel");
+const { Day } = require("../model/dayModel");
 const HttpError = require("../model/HttpError");
 const { exportData } = require("../utils/util");
 
