@@ -1,6 +1,6 @@
 const { Workout } = require("../model/workoutModel");
-const HttpError = require("../model/HttpError");
-const { exportData } = require("../utils/Util");
+const HttpError = require("../model/httpError");
+const { exportData } = require("../utils/util");
 
 const getWorkouts = async (req, res, next) => {
   try {

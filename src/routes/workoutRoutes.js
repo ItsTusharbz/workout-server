@@ -1,7 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 
-const workoutController = require("../controller/WorkoutController")
+const workoutController = require("../controller/workoutController")
 
 Router.get("/", workoutController.getWorkouts);
 Router.post("/", workoutController.addWorkout);

@@ -3,9 +3,9 @@ const bodyparser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-const workoutRoutes = require("./routes/WorkoutRoutes");
-const dayRoutes = require("./routes/DayRoutes");
-const weekRoutes = require("./routes/WeekRoutes");
+const workoutRoutes = require("./routes/workoutRoutes");
+const dayRoutes = require("./routes/dayRoutes");
+const weekRoutes = require("./routes/weekRoutes");
 
 const url = "mongodb+srv://tusharbz:Tushar@cluster0-eh0ti.gcp.mongodb.net/Gym?retryWrites=true&w=majority";
 const port = process.env.PORT || 5000;
