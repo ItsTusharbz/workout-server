@@ -39,7 +39,7 @@ const removeWorkout = async (req, res, next) => {
 
 const updateWorkout = async (req, res, next) => {
   const id = req.params.wid;
-  const { name, rep, weight, bodyPart, duration, status } = req.body;
+  const { name, rep, weight, bodyPart, duration, status, sets } = req.body;
   try {
     const workoutSchema = await Workout.findById(id);
     workoutSchema.name = name;
@@ -47,6 +47,7 @@ const updateWorkout = async (req, res, next) => {
     workoutSchema.weight = weight;
     workoutSchema.bodyPart = bodyPart;
     workoutSchema.duration = duration;
+    workoutSchema.sets = sets;
     workoutSchema.status = status;
     await workoutSchema.save();
     res.send(exportData(workoutSchema));
