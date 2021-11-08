@@ -1,6 +1,6 @@
-const { Week } = require("../model/weekModel");
-const HttpError = require("../model/HttpError");
-const { exportData } = require("../utils/util");
+const { Week } = require("../Model/WeekModel");
+const HttpError = require("../Model/HttpError");
+const { exportData } = require("../Utils/Util");
 
 const getWeek = async (req, res, next) => {
   try {
