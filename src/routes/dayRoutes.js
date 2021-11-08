@@ -1,7 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 
-const dayController = require("../Controller/DayController")
+const dayController = require("../controller/DayController")
 
 Router.get("/", dayController.getDay);
 Router.post("/", dayController.addDay);

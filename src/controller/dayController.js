@@ -1,6 +1,6 @@
-const { Day } = require("../Model/DayModel");
-const HttpError = require("../Model/HttpError");
-const { exportData } = require("../Utils/Util");
+const { Day } = require("../model/DayModel");
+const HttpError = require("../model/HttpError");
+const { exportData } = require("../utils/Util");
 
 const getDay = async (req, res, next) => {
   try {
