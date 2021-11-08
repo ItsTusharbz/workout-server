@@ -1,4 +1,4 @@
-const { Workout } = require("../model/WorkoutModel");
+const { Workout } = require("../model/workoutModel");
 const HttpError = require("../model/HttpError");
 const { exportData } = require("../utils/Util");
 
