@@ -3,10 +3,12 @@ const HttpError = require("../model/httpError");
 const { exportData } = require("../utils/util");
 
 const getWorkouts = async (req, res, next) => {
+  const { bodyPartId } = req.params;
   try {
-    const repsonse = await Workout.find({});
+    const repsonse = await Workout.find({ bodyPartId: bodyPartId });
     res.send(exportData(repsonse));
   } catch (err) {
+    console.log(err);
     const error = new HttpError("No workout found", 500);
     return next(error);
   }

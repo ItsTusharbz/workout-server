@@ -6,10 +6,11 @@ require("dotenv").config();
 const workoutRoutes = require("./routes/workoutRoutes");
 const dayRoutes = require("./routes/dayRoutes");
 const weekRoutes = require("./routes/weekRoutes");
+const workoutDetailRoutes = require("./routes/workoutDetailRoutes");
 
-const url = "mongodb+srv://tusharbz:Tushar@cluster0-eh0ti.gcp.mongodb.net/Gym?retryWrites=true&w=majority";
+const url =
+  "mongodb+srv://tusharbz:Tushar@cluster0-eh0ti.gcp.mongodb.net/Gym?retryWrites=true&w=majority";
 const port = process.env.PORT || 5000;
-
 
 app.use(bodyparser.json());
 app.use(cors());
@@ -21,15 +22,14 @@ app.get("/", (req, res, next) => {
 app.use("/workout", workoutRoutes);
 app.use("/day", dayRoutes);
 app.use("/week", weekRoutes);
-
+app.use("/workoutDetail", workoutDetailRoutes);
 
 app.listen(port, () => {
-    mongoose
-      .connect(url, { useUnifiedTopology: true })
-      .then(() => {
-        console.log("Db Connected");
-        console.log(`http://localhost:${port}/`);
-      })
-      .catch((err) => console.log(err));
-  });
-  
+  mongoose
+    .connect(url, { useUnifiedTopology: true })
+    .then(() => {
+      console.log("Db Connected");
+      console.log(`http://localhost:${port}/`);
+    })
+    .catch((err) => console.log(err));
+});
