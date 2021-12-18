@@ -7,6 +7,7 @@ const workoutRoutes = require("./routes/workoutRoutes");
 const dayRoutes = require("./routes/dayRoutes");
 const weekRoutes = require("./routes/weekRoutes");
 const workoutDetailRoutes = require("./routes/workoutDetailRoutes");
+const bodyPartsRoutes = require("./routes/bodyPartsRoutes");
 
 const url =
   "mongodb+srv://tusharbz:Tushar@cluster0-eh0ti.gcp.mongodb.net/Gym?retryWrites=true&w=majority";
@@ -23,6 +24,7 @@ app.use("/workout", workoutRoutes);
 app.use("/day", dayRoutes);
 app.use("/week", weekRoutes);
 app.use("/workoutDetail", workoutDetailRoutes);
+app.use("/bodyparts", bodyPartsRoutes);
 
 app.listen(port, () => {
   mongoose
