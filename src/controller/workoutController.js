@@ -1,62 +1,59 @@
 const { Workout } = require("../model/workoutModel");
 const HttpError = require("../model/httpError");
 const { exportData } = require("../utils/util");
+const { con } = require("../utils/db");
 
 const getWorkouts = async (req, res, next) => {
   const { bodyPartId } = req.params;
-  try {
-    const repsonse = await Workout.find({ bodyPartId: bodyPartId });
-    res.send(exportData(repsonse));
-  } catch (err) {
-    console.log(err);
-    const error = new HttpError("No workout found", 500);
-    return next(error);
-  }
+  const sqlquery = "SELECT * FROM `workouts` WHERE bodyPartId = ?";
+  con.query(sqlquery, [bodyPartId], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
+  });
 };
 
 const addWorkout = async (req, res, next) => {
-  const workoutSchema = new Workout({
-    ...req.body,
+  const { name, bodyPartId } = req.body;
+  const sqlquery = `Insert into workouts (name,bodyPartId) values (?,?)`;
+  con.query(sqlquery, [name, bodyPartId], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
   });
-  try {
-    await workoutSchema.save();
-    res.send(exportData(workoutSchema));
-  } catch (err) {
-    const error = new HttpError(err, 500);
-    return next(error);
-  }
 };
 
 const removeWorkout = async (req, res, next) => {
   const id = req.params.wid;
-  try {
-    const workoutSchema = await Workout.findById(id);
-    await workoutSchema.remove();
-    res.send(exportData(workoutSchema));
-  } catch (err) {
-    const error = new HttpError("workout not found", 500);
-    return next(error);
-  }
+  const sqlquery = "DELETE FROM workouts WHERE id = ?";
+  con.query(sqlquery, [id], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
+  });
 };
 
 const updateWorkout = async (req, res, next) => {
+  const { name } = req.body;
   const id = req.params.wid;
-  const { name, rep, weight, bodyPart, duration, status, sets } = req.body;
-  try {
-    const workoutSchema = await Workout.findById(id);
-    workoutSchema.name = name;
-    workoutSchema.rep = rep;
-    workoutSchema.weight = weight;
-    workoutSchema.bodyPart = bodyPart;
-    workoutSchema.duration = duration;
-    workoutSchema.sets = sets;
-    workoutSchema.status = status;
-    await workoutSchema.save();
-    res.send(exportData(workoutSchema));
-  } catch (err) {
-    const error = new HttpError(err, 500);
-    return next(error);
-  }
+  const sqlquery = "UPDATE workouts SET name = ? where id = ?";
+  con.query(sqlquery, [name, id], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
+  });
 };
 
 exports.getWorkouts = getWorkouts;

@@ -1,16 +1,19 @@
-const { BodyPart } = require("../model/bodyPartModel");
 const HttpError = require("../model/httpError");
 const { exportData } = require("../utils/util");
+const { con } = require("../utils/db");
 
 const getBodyPartList = async (req, res, next) => {
-  try {
-    const repsonse = await BodyPart.find();
+  const query = "SELECT * FROM `bodyparts` WHERE 1";
+  let repsonse = [];
+  con.query(query, (err, result) => {
+    if (err) {
+      console.log(err);
+      const error = new HttpError("No body part list found", 500);
+      return next(error);
+    }
+    repsonse = result;
     res.send(exportData(repsonse));
-  } catch (err) {
-      console.log(err)
-    const error = new HttpError("No body part list found", 500);
-    return next(error);
-  }
+  });
 };
 
 exports.getBodyPartList = getBodyPartList;

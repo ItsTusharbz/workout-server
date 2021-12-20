@@ -9,7 +9,8 @@ const weekRoutes = require("./routes/weekRoutes");
 const workoutDetailRoutes = require("./routes/workoutDetailRoutes");
 const bodyPartsRoutes = require("./routes/bodyPartsRoutes");
 const summaryRoute = require("./routes/summaryRoute");
-var mysql = require("mysql");
+const db = require("./utils/db");
+
 
 const url =
   "mongodb+srv://tusharbz:Tushar@cluster0-eh0ti.gcp.mongodb.net/Gym?retryWrites=true&w=majority";
@@ -30,21 +31,8 @@ app.use("/bodyparts", bodyPartsRoutes);
 app.use("/summary", summaryRoute);
 
 app.listen(port, () => {
-  // mongoose
-  //   .connect(url, { useUnifiedTopology: true })
-  //   .then(() => {
-  //     console.log("Db Connected");
-  //     console.log(`http://localhost:${port}/`);
-  //   })
-  //   .catch((err) => console.log(err));
-  var con = mysql.createConnection({
-    host: "103.102.234.200",
-    user: "agdvpnxc_root",
-    password: "Tushar@123",
-    database: "agdvpnxc_workout"
-  });
-  con.connect(function (err) {
-    if (err) throw err;
+  db.con.connect(function (err) {
+    if (err) console.log(err)
     console.log("Connected!");
   });
 });
