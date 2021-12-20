@@ -1,61 +1,66 @@
 const { workoutDetailModel } = require("../model/workoutDetailModel");
 const HttpError = require("../model/httpError");
 const { exportData } = require("../utils/util");
+const { con } = require("../utils/db");
 
 const getWorkoutsDetail = async (req, res, next) => {
   const workoutId = req.params.workoutId;
-  try {
-    const repsonse = await workoutDetailModel.find({ workoutId: workoutId });
-    res.send(exportData(repsonse));
-  } catch (err) {
-    const error = new HttpError("No workout detail found", 500);
-    return next(error);
-  }
+  const sqlquery = "SELECT * FROM `workoutDetails` WHERE workoutId = ?";
+  con.query(sqlquery, [workoutId], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
+  });
 };
 
 const addWorkoutDetail = async (req, res, next) => {
-  const workoutSchema = new workoutDetailModel({
-    ...req.body,
+  const { workoutId, reps, weight, duration } = req.body;
+  console.log({ workoutId, reps, weight, duration });
+  const sqlquery = `Insert into workoutDetails (workoutId,reps,weight,duration) values (?,?,?,?)`;
+  con.query(sqlquery, [workoutId, reps, weight, duration], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
   });
-  try {
-    await workoutSchema.save();
-    res.send(exportData(workoutSchema));
-  } catch (err) {
-    const error = new HttpError(err, 500);
-    return next(error);
-  }
 };
 
 const removeWorkoutDetail = async (req, res, next) => {
   const { workoutDetailId } = req.params;
-  try {
-    const workoutSchema = await workoutDetailModel.findById(workoutDetailId);
-    await workoutSchema.remove();
-    res.send(exportData(workoutSchema));
-  } catch (err) {
-    const error = new HttpError("workout detail not found", 500);
-    return next(error);
-  }
+  const sqlquery = "DELETE FROM workoutDetails WHERE id = ?";
+  con.query(sqlquery, [workoutDetailId], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
+  });
 };
 
 const updateWorkoutDetail = async (req, res, next) => {
   const { workoutDetailId } = req.params;
-  const { name, rep, weight, bodyPart, duration, status, sets } = req.body;
-  try {
-    const workoutSchema = await workoutDetailModel.findById(workoutDetailId);
-    workoutSchema.name = name;
-    workoutSchema.rep = rep;
-    workoutSchema.weight = weight;
-    workoutSchema.bodyPart = bodyPart;
-    workoutSchema.duration = duration;
-    workoutSchema.sets = sets;
-    workoutSchema.status = status;
-    await workoutSchema.save();
-    res.send(exportData(workoutSchema));
-  } catch (err) {
-    const error = new HttpError(err, 500);
-    return next(error);
-  }
+  const { rep, weight, duration } = req.body;
+  const id = req.params.wid;
+  const sqlquery =
+    "UPDATE workoutDetails SET rep = ?, weight = ?,duration = ? where id = ?";
+  con.query(
+    sqlquery,
+    [rep, weight, duration, workoutDetailId],
+    (err, result) => {
+      if (err) {
+        const error = new HttpError(err, 500);
+        return next(error);
+      } else {
+        res.send(exportData(result));
+      }
+    }
+  );
 };
 
 exports.getWorkoutsDetail = getWorkoutsDetail;

@@ -3,7 +3,7 @@ const { exportData } = require("../utils/util");
 const { con } = require("../utils/db");
 
 const getBodyPartList = async (req, res, next) => {
-  const query = "SELECT * FROM `bodyparts` WHERE 1";
+  const query = "SELECT * FROM `bodyParts` WHERE 1";
   let repsonse = [];
   con.query(query, (err, result) => {
     if (err) {
