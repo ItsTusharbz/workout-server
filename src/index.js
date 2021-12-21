@@ -31,8 +31,8 @@ app.use("/bodyparts", bodyPartsRoutes);
 app.use("/summary", summaryRoute);
 
 app.listen(port, () => {
-  db.con.connect(function (err) {
-    if (err) console.log(err)
-    console.log("Connected!");
-  });
+  // db.con.connect(function (err) {
+  //   if (err) console.log("eerr"err)
+  //   console.log("Connected!");
+  // });
 });
