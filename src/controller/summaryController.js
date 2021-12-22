@@ -11,8 +11,27 @@ const getSummaryByDate = async (req, res, next) => {
       const error = new HttpError(err, 500);
       return next(error);
     } else {
-      // const expectedResult = result? result.reduce((a,b) => a.push(),[])
-      res.send(exportData(result));
+      const newResult = result.map((a) => {
+        const detail = [];
+        let i = 0;
+        const repsArray = a.reps.split(",");
+        const weightArray = a.weight.split(",");
+        const durationArray = a.duration.split(",");
+        while (i < repsArray.length) {
+          detail.push({
+            reps: repsArray[i] ? repsArray[i] : null,
+            weight: weightArray[i] ? weightArray[i] : null,
+            duratioin: durationArray[i] ? durationArray[i] : null,
+          }),
+            i++;
+        }
+        return {
+          bodyPartName: a.bodyPartName,
+          workoutName: a.workoutName,
+          detail,
+        };
+      });
+      res.send(exportData(newResult));
     }
   });
 };
