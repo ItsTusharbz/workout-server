@@ -1,65 +1,20 @@
 const HttpError = require("../model/httpError");
 const { exportData, getToday } = require("../utils/util");
-const { workoutDetailModel } = require("../model/workoutDetailModel");
-const { Workout } = require("../model/workoutModel");
+const { con } = require("../utils/db");
 
 const getSummaryByDate = async (req, res, next) => {
   const { date } = req.body;
-  const { userId } = req.params;
-  try {
-    const today = date ? date : getToday();
-    const response = await Workout.aggregate([
-      {
-        $lookup: {
-          from: "workoutdetails",
-          //   localField: "_id",
-          //   foreignField: "workoutId",
-          let: { wid: "$_id" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$workoutId", "$$wid"] } } },
-          ],
-          as: "detail",
-        },
-      },
-    ]);
-
-    //   .lookup({
-    //     from: "workoutdetails",
-    //     localField: "_id",
-    //     foreignField: "workoutId",
-    //     as: "workoutDetail",
-    //   });
-    // .group({ createdOn: "$workoutId" })
-    // .lookup({
-    //   from: "bodyParts",
-    //   localField: "workout[0].bodyPartId",
-    //   foreignField: "_id",
-    //   as: "bodyparts",
-    // });
-    //   .find({ createdOn: today })
-    //   .populate({
-    //     path: "workoutId",
-    //     select: "name",
-    //     populate: { path: "bodyPartId", select: "name" },
-    //   })
-
-    const workoutDetail = response;
-    // .map((w) => ({
-    //   id: w._id,
-    //   reps: w.reps,
-    //   weight: w.weight,
-    //   duration: w.duration,
-    //   createdOn: w.createdOn,
-    //   workoutName: w.workoutId.name,
-    //   bodyPartName: w.workoutId.bodyPartId.name,
-    // }));
-
-    res.send(exportData(workoutDetail));
-  } catch (err) {
-    console.log(err);
-    const error = new HttpError("No Week found", 500);
-    return next(error);
-  }
+  const sqlquery =
+    "SELECT GROUP_CONCAT(wd.reps) as reps,GROUP_CONCAT(wd.weight) as weight, GROUP_CONCAT(wd.duration) as duration, w.name as workoutName, b.name as bodyPartName FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE wd.createdOn = CURDATE() group by wd.workoutId";
+  con.query(sqlquery, (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      // const expectedResult = result? result.reduce((a,b) => a.push(),[])
+      res.send(exportData(result));
+    }
+  });
 };
 
 exports.getSummaryByDate = getSummaryByDate;
