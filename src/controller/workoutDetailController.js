@@ -1,17 +1,27 @@
 const { workoutDetailModel } = require("../model/workoutDetailModel");
 const HttpError = require("../model/httpError");
-const { exportData } = require("../utils/util");
+const { exportData, prepareSummaryData } = require("../utils/util");
 const { con } = require("../utils/db");
 
 const getWorkoutsDetail = async (req, res, next) => {
   const workoutId = req.params.workoutId;
-  const sqlquery = "SELECT * FROM `workoutDetails` WHERE workoutId = ?";
+  const sqlquery =
+    "SELECT GROUP_CONCAT(id) as id, GROUP_CONCAT(reps) as reps, GROUP_CONCAT(weight) as weight, GROUP_CONCAT(duration) as duration, createdOn FROM `workoutDetails` WHERE workoutId = ? Group By createdOn Order by createdOn DESC";
   con.query(sqlquery, [workoutId], (err, result) => {
     if (err) {
       const error = new HttpError(err, 500);
       return next(error);
     } else {
-      res.send(exportData(result));
+      const responseData = result.map((workout) => ({
+        createdOn: workout.createdOn,
+        detail: prepareSummaryData({
+          id: workout.id,
+          reps: workout.reps,
+          weight: workout.weight,
+          duration: workout.duration,
+        }),
+      }));
+      res.send(exportData(responseData));
     }
   });
 };
