@@ -46,7 +46,7 @@ const prepareSummaryData = (data) => {
       id: idArray[i] ? idArray[i] : null,
       reps: repsArray[i] ? repsArray[i] : null,
       weight: weightArray[i] ? weightArray[i] : null,
-      duratioin: durationArray[i] ? durationArray[i] : null,
+      duration: durationArray[i] ? durationArray[i] : null,
     }),
       i++;
   }
