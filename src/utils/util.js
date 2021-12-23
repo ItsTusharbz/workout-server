@@ -29,6 +29,31 @@ const getToday = () => {
   return moment().format("L");
 };
 
+
+
+// convert {reps:"12,32",weight:"21,23",duration:"24,54"} =
+// [{reps:"1",weight:"21",duration:"24"},{reps:"32",weight:"23",duration:"54"}]
+
+const prepareSummaryData = (data) => {
+  const detail = [];
+  let i = 0;
+  const idArray = data.id.split(",");
+  const repsArray = data.reps.split(",");
+  const weightArray = data.weight.split(",");
+  const durationArray = data.duration.split(",");
+  while (i < idArray.length) {
+    detail.push({
+      id: idArray[i] ? idArray[i] : null,
+      reps: repsArray[i] ? repsArray[i] : null,
+      weight: weightArray[i] ? weightArray[i] : null,
+      duratioin: durationArray[i] ? durationArray[i] : null,
+    }),
+      i++;
+  }
+  return detail;
+};
+
+exports.prepareSummaryData = prepareSummaryData;
 exports.exportData = exportData;
 exports.mongoGetter = mongoGetter;
 exports.exportError = exportError;
