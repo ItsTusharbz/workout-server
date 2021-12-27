@@ -18,6 +18,7 @@ const getWorkouts = async (req, res, next) => {
 
 const addWorkout = async (req, res, next) => {
   const { name, bodyPartId } = req.body;
+  console.log({ name, bodyPartId })
   const sqlquery = `Insert into workouts (name,bodyPartId) values (?,?)`;
   con.query(sqlquery, [name, bodyPartId], (err, result) => {
     if (err) {
