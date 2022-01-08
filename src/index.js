@@ -8,7 +8,8 @@ const dayRoutes = require("./routes/dayRoutes");
 const weekRoutes = require("./routes/weekRoutes");
 const workoutDetailRoutes = require("./routes/workoutDetailRoutes");
 const bodyPartsRoutes = require("./routes/bodyPartsRoutes");
-const summaryRoute = require("./routes/summaryRoute");
+const summaryRoutes = require("./routes/summaryRoute");
+const userRoutes = require("./routes/userRoutes");
 const db = require("./utils/db");
 
 
@@ -28,7 +29,8 @@ app.use("/day", dayRoutes);
 app.use("/week", weekRoutes);
 app.use("/workoutDetail", workoutDetailRoutes);
 app.use("/bodyparts", bodyPartsRoutes);
-app.use("/summary", summaryRoute);
+app.use("/summary", summaryRoutes);
+app.use("/user", userRoutes);
 
 app.listen(port, () => {
   // db.con.connect(function (err) {

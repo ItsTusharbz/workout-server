@@ -14,7 +14,6 @@ const getSummaryByDate = async (req, res, next) => {
     "SELECT DISTINCT(wd.createdOn) as createdOn, GROUP_CONCAT(wd.id) as id, GROUP_CONCAT(wd.reps) as reps,GROUP_CONCAT(wd.weight) as weight, GROUP_CONCAT(wd.duration) as duration, w.name as workoutName, b.name as bodyPartName FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE " +
     compareDate +
     " group by wd.workoutId";
-    console.log(sqlquery)
   con.query(sqlquery, (err, result) => {
     if (err) {
       const error = new HttpError(err, 500);
