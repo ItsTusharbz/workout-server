@@ -2,12 +2,11 @@ const HttpError = require("../model/httpError");
 const { exportData, exportError } = require("../utils/util");
 const { con } = require("../utils/db");
 const { USER_DOESNT_EXISTS_CODE } = require("../utils/constants");
+const passport = require("passport");
+var jwt = require("jsonwebtoken");
 
-const fetchUser = async (userId) => {
+const fetchAllUser = async (userId) => {
   let sqlquery = "SELECT * from users where 1";
-  if (userId) {
-    sqlquery = "SELECT * from users where id=" + userId;
-  }
   return new Promise((resolve, reject) => {
     con.query(sqlquery, (err, result) => {
       if (err) {
@@ -19,9 +18,35 @@ const fetchUser = async (userId) => {
   });
 };
 
+const fetchUserById = async (userId) => {
+  const sqlquery = "SELECT * from users where id=" + userId;
+  return new Promise((resolve, reject) => {
+    con.query(sqlquery, (err, result) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
+};
+
+const fetchUserByUsername = async (username) => {
+  const sqlquery = "SELECT * from users where username=?";
+  return new Promise((resolve, reject) => {
+    con.query(sqlquery, [username], (err, result) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(result[0]);
+    });
+  });
+};
+
 const getUsers = async (req, res, next) => {
   const { userId } = req.params;
-  const userData = await fetchUser(userId);
+  const userData = await fetchUserById(userId);
   if (userData.length) {
     res.send(exportData(userData));
   } else {
@@ -29,28 +54,59 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-const saveUser = async (req, res, next) => {
-  const { name, username, email, password, contact, address } = req.body;
-  const isActive = "active";
-  const sqlquery = `Insert into users (name, username, email, password, contact ,status, address) values (?,?,?,?,?,?,?)`;
-  con.query(
-    sqlquery,
-    [name, username, email, password, contact, isActive, address],
-    (err, result) => {
-      if (err) {
-        const error = new HttpError(err, 500);
-        return next(error);
+const Login = async (req, res, next) => {
+  passport.authenticate("login", async (err, user, info) => {
+    try {
+      if (err || !Object.entries(user).length) {
+        const error = new HttpError("Unauthorized", 401);
+        req.next(error);
       } else {
-        res.send(exportData(result));
+        req.login(user, { session: false }, async (error) => {
+          if (error) req.next(error);
+          const { id, username } = user;
+          const token = jwt.sign(
+            { user: { id, username } },
+            process.env.SECRET,
+            {
+              algorithm: "HS256",
+            }
+          );
+          return res.json({ token });
+        });
       }
+    } catch (error) {
+      return next("asdad");
     }
-  );
+  })(req, res, next);
+};
+
+const addUser = (userData) => {
+  const { username, password } = userData;
+  const isActive = "active";
+  const sqlquery = `Insert into users (username,password) values (?,?)`;
+  return new Promise((resolve, reject) => {
+    con.query(sqlquery, [username, password], (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+};
+
+const Register = async (req, res, next) => {
+  if (req.error) {
+    res.send({
+      message: "Username already exists",
+    });
+  }
+  res.send({
+    message: "Signup successful",
+  });
 };
 
 const updateUser = async (req, res, next) => {
   const { userId } = req.params;
   const { name, address, email, contact } = req.body;
-  const userData = await fetchUser(userId);
+  const userData = await fetchUserById(userId);
   if (userData.length) {
     const sqlquery =
       "UPDATE users SET name = ?, address = ?, email = ?, contact = ? where id = ?";
@@ -72,5 +128,10 @@ const updateUser = async (req, res, next) => {
 };
 
 exports.getUsers = getUsers;
-exports.saveUser = saveUser;
+exports.Register = Register;
 exports.updateUser = updateUser;
+exports.addUser = addUser;
+exports.Login = Login;
+exports.fetchAllUser = fetchAllUser;
+exports.fetchUserById = fetchUserById;
+exports.fetchUserByUsername = fetchUserByUsername;
