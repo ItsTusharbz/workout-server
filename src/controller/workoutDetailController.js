@@ -5,9 +5,10 @@ const { con } = require("../utils/db");
 
 const getWorkoutsDetail = async (req, res, next) => {
   const workoutId = req.params.workoutId;
+  const { id } = req.user;
   const sqlquery =
-    "SELECT GROUP_CONCAT(id) as id, GROUP_CONCAT(reps) as reps, GROUP_CONCAT(weight) as weight, GROUP_CONCAT(duration) as duration, createdOn FROM `workoutDetails` WHERE workoutId = ? Group By createdOn Order by createdOn DESC";
-  con.query(sqlquery, [workoutId], (err, result) => {
+    "SELECT GROUP_CONCAT(id) as id, GROUP_CONCAT(reps) as reps, GROUP_CONCAT(weight) as weight, GROUP_CONCAT(duration) as duration, createdOn FROM `workoutDetails` WHERE workoutId = ? and userId = ? Group By createdOn Order by createdOn DESC";
+  con.query(sqlquery, [workoutId, id], (err, result) => {
     if (err) {
       const error = new HttpError(err, 500);
       return next(error);
@@ -28,16 +29,20 @@ const getWorkoutsDetail = async (req, res, next) => {
 
 const addWorkoutDetail = async (req, res, next) => {
   const { workoutId, reps, weight, duration } = req.body;
-  console.log({ workoutId, reps, weight, duration });
-  const sqlquery = `Insert into workoutDetails (workoutId,reps,weight,duration) values (?,?,?,?)`;
-  con.query(sqlquery, [workoutId, reps, weight, duration], (err, result) => {
-    if (err) {
-      const error = new HttpError(err, 500);
-      return next(error);
-    } else {
-      res.send(exportData(result));
+  const { id } = req.user;
+  const sqlquery = `Insert into workoutDetails (workoutId,reps,weight,duration,userId) values (?,?,?,?,?)`;
+  con.query(
+    sqlquery,
+    [workoutId, reps, weight, duration, id],
+    (err, result) => {
+      if (err) {
+        const error = new HttpError(err, 500);
+        return next(error);
+      } else {
+        res.send(exportData("Workout added successfully"));
+      }
     }
-  });
+  );
 };
 
 const removeWorkoutDetail = async (req, res, next) => {

@@ -26,11 +26,13 @@ const encrypPassword = async (password) => {
   return await bcrypt.hash(password, 10);
 };
 
+const formatDate = (date) => {
+  return moment(date).format("YYYY-MM-DD");
+};
+
 const getToday = () => {
   return moment().format("L");
 };
-
-
 
 // convert {reps:"12,32",weight:"21,23",duration:"24,54"} =
 // [{reps:"1",weight:"21",duration:"24"},{reps:"32",weight:"23",duration:"54"}]
@@ -60,3 +62,4 @@ exports.mongoGetter = mongoGetter;
 exports.exportError = exportError;
 exports.encrypPassword = encrypPassword;
 exports.getToday = getToday;
+exports.formatDate = formatDate;
