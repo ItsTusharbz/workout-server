@@ -58,11 +58,11 @@ const Login = async (req, res, next) => {
   passport.authenticate("login", async (err, user, info) => {
     try {
       if (err || !Object.entries(user).length) {
-        const error = new HttpError("Unauthorized", 401);
         req.next(error);
       } else {
         req.login(user, { session: false }, async (error) => {
-          if (error) req.next(error);
+          if (error)
+            return res.send(exportError(403, "User name or password is wrong"));
           const { id, username } = user;
           const token = jwt.sign(
             { user: { id, username } },
@@ -75,7 +75,7 @@ const Login = async (req, res, next) => {
         });
       }
     } catch (error) {
-      return next("asdad");
+      return res.send(exportError(403, "User name or password is wrong"));
     }
   })(req, res, next);
 };

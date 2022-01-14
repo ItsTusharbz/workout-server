@@ -33,29 +33,15 @@ app.post(
 );
 app.post("/login", userController.Login);
 
-app.use(
-  "/workout",
-  passport.authenticate("jwt", { session: false }),
-  workoutRoutes
-);
-app.use("/day", passport.authenticate("jwt", { session: false }), dayRoutes);
-app.use("/week", passport.authenticate("jwt", { session: false }), weekRoutes);
-app.use(
-  "/workoutDetail",
-  passport.authenticate("jwt", { session: false }),
-  workoutDetailRoutes
-);
-app.use(
-  "/bodyparts",
-  passport.authenticate("jwt", { session: false }),
-  bodyPartsRoutes
-);
-app.use(
-  "/summary",
-  passport.authenticate("jwt", { session: false }),
-  summaryRoutes
-);
-app.use("/user", passport.authenticate("jwt", { session: false }), userRoutes);
+app.use(passport.authenticate("jwt", { session: false }));
+
+app.use("/workout", workoutRoutes);
+app.use("/day", dayRoutes);
+app.use("/week", weekRoutes);
+app.use("/workoutDetail", workoutDetailRoutes);
+app.use("/bodyparts", bodyPartsRoutes);
+app.use("/summary", summaryRoutes);
+app.use("/user", userRoutes);
 
 app.listen(port, () => {
   // db.con.connect(function (err) {
