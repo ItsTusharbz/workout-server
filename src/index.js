@@ -24,7 +24,7 @@ app.use(cors());
 app.get("/", (req, res, next) => {
   res.send("App is up and running...");
 });
-require("./Auth/Auth");
+require("./Auth/auth");
 
 app.post(
   "/register",
