@@ -2,11 +2,13 @@ const HttpError = require("../model/httpError");
 const { exportData, getToday, prepareSummaryData } = require("../utils/util");
 const { con } = require("../utils/db");
 const { formatDate } = require("../utils/util");
+const moment = require("moment");
 
 const getSummaryByDate = async (req, res, next) => {
   const { date } = req.body;
   const { id } = req.user;
   let compareDate = null;
+  console.log(date)
   if (date) {
     compareDate = `wd.createdOn = "${date}"`;
   } else {
@@ -46,18 +48,17 @@ const getHistorySummary = (req, res, next) => {
   const { id } = req.user;
   const compareDate = `(wd.createdOn BETWEEN '${start}' AND '${end}')`;
   const sqlquery =
-    "SELECT wd.createdOn as createdOn, GROUP_CONCAT(DISTINCT(w.name)) as workoutName,b.name as bodyPartName FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE" +
+    "SELECT wd.createdOn as createdOn, w.name as workoutName,b.name as bodyPartName FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE" +
     compareDate +
-    " and wd.userId=?" +
-    " group by b.name";
+    " and wd.userId=? ORDER by b.name";
   console.log(sqlquery);
   con.query(sqlquery, [id], (err, result) => {
     if (result) {
       const newArray = [];
       result.map((entry, index) => {
-        const foundindex = newArray.indexOf(
-          (a) => a.createdOn === entry.createdOn
-        );
+        const foundindex = newArray.findIndex((a) => {
+          return moment(a.createdOn).isSame(moment(entry.createdOn));
+        });
         if (foundindex === -1) {
           newArray.push({
             createdOn: formatDate(entry.createdOn),
