@@ -28,7 +28,6 @@ require("./Auth/auth");
 
 app.post(
   "/register",
-  passport.authenticate("signup", { session: false }),
   userController.Register
 );
 app.post("/login", userController.Login);

@@ -16,18 +16,19 @@ passport.use(
   new localStrategy(async (username, password, done) => {
     try {
       const userData = await userController.fetchUserByUsername(username);
-      console.log(userData)
       if (userData) {
-        return done("user already exists", userData);
+        done("user already exists");
+      } else {
+        const hashPassword = await encrypPassword(password);
+        const userToSave = {
+          username,
+          password: hashPassword,
+        };
+        const user = await userController.addUser(userToSave);
+        done(null, user);
       }
-      const hashPassword = await encrypPassword(password);
-      const userToSave = {
-        username,
-        password: hashPassword,
-      };
-      const user = await userController.addUser(userToSave);
-      return done(null, user);
     } catch (error) {
+      console.log(error);
       done(error);
     }
   })

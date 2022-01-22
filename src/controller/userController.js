@@ -1,5 +1,5 @@
 const HttpError = require("../model/httpError");
-const { exportData, exportError } = require("../utils/util");
+const { exportData, exportError, encrypPassword } = require("../utils/util");
 const { con } = require("../utils/db");
 const { USER_DOESNT_EXISTS_CODE } = require("../utils/constants");
 const passport = require("passport");
@@ -32,7 +32,7 @@ const fetchUserById = async (userId) => {
 };
 
 const fetchUserByUsername = async (username) => {
-  const sqlquery = "SELECT * from users where username=?";
+  const sqlquery = "SELECT * from users where username=? limit 1";
   return new Promise((resolve, reject) => {
     con.query(sqlquery, [username], (err, result) => {
       if (err) {
@@ -81,11 +81,10 @@ const Login = async (req, res, next) => {
 };
 
 const addUser = (userData) => {
-  const { username, password } = userData;
-  const isActive = "active";
-  const sqlquery = `Insert into users (username,password) values (?,?)`;
+  const { username, password, contact, email } = userData;
+  const sqlquery = `Insert into users (username,password,contact,email) values (?,?,?,?)`;
   return new Promise((resolve, reject) => {
-    con.query(sqlquery, [username, password], (err, result) => {
+    con.query(sqlquery, [username, password, contact, email], (err, result) => {
       if (err) reject(err);
       resolve(result);
     });
@@ -93,14 +92,26 @@ const addUser = (userData) => {
 };
 
 const Register = async (req, res, next) => {
-  if (req.error) {
-    res.send({
-      message: "Username already exists",
-    });
+  const { fullname, username, password, contact, email } = req.body;
+  try {
+    const userData = await fetchUserByUsername(username);
+    if (userData) {
+      res.send(exportError(409, "Username already exists"));
+    } else {
+      const hashPassword = await encrypPassword(password);
+      const userToSave = {
+        username,
+        password: hashPassword,
+        contact,
+        email,
+        name: fullname,
+      };
+      const user = await addUser(userToSave);
+      res.send(exportData("Signup successfull"));
+    }
+  } catch (error) {
+    console.log(error);
   }
-  res.send({
-    message: "Signup successful",
-  });
 };
 
 const updateUser = async (req, res, next) => {
