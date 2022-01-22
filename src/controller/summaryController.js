@@ -50,7 +50,7 @@ const getHistorySummary = (req, res, next) => {
   const sqlquery =
     "SELECT wd.createdOn as createdOn, w.name as workoutName,b.name as bodyPartName FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE" +
     compareDate +
-    " and wd.userId=? ORDER by b.name";
+    " and wd.userId=?  ORDER by  wd.createdOn";
   console.log(sqlquery);
   con.query(sqlquery, [id], (err, result) => {
     if (result) {
