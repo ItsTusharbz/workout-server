@@ -8,14 +8,14 @@ const getSummaryByDate = async (req, res, next) => {
   const { date } = req.body;
   const { id } = req.user;
   let compareDate = null;
-  console.log(date)
+  console.log(date);
   if (date) {
     compareDate = `wd.createdOn = "${date}"`;
   } else {
     compareDate = "wd.createdOn = CURDATE()";
   }
   const sqlquery =
-    "SELECT DISTINCT(wd.createdOn) as createdOn, GROUP_CONCAT(wd.id) as id, GROUP_CONCAT(wd.reps) as reps,GROUP_CONCAT(wd.weight) as weight, GROUP_CONCAT(wd.duration) as duration, w.name as workoutName, b.name as bodyPartName FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE " +
+    "SELECT DISTINCT(wd.createdOn) as createdOn, GROUP_CONCAT(wd.id) as id, GROUP_CONCAT(wd.reps) as reps,GROUP_CONCAT(wd.weight) as weight, GROUP_CONCAT(wd.duration) as duration, w.name as workoutName, b.name as bodyPartName, GROUP_CONCAT(status) as status FROM `workoutDetails` as wd join workouts as w ON workoutId = w.id join bodyParts as b ON w.bodyPartId = b.id WHERE " +
     compareDate +
     " and wd.userId=?" +
     " group by wd.workoutId";
@@ -35,6 +35,7 @@ const getSummaryByDate = async (req, res, next) => {
             reps: workout.reps,
             weight: workout.weight,
             duration: workout.duration,
+            status: workout.status,
           }),
         };
       });
