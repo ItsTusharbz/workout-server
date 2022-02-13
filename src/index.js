@@ -10,12 +10,11 @@ const workoutDetailRoutes = require("./routes/workoutDetailRoutes");
 const bodyPartsRoutes = require("./routes/bodyPartsRoutes");
 const summaryRoutes = require("./routes/summaryRoute");
 const userRoutes = require("./routes/userRoutes");
+const programRoutes = require("./routes/programRoutes");
 const db = require("./utils/db");
 const userController = require("./controller/userController");
 const passport = require("passport");
 
-const url =
-  "mongodb+srv://tusharbz:Tushar@cluster0-eh0ti.gcp.mongodb.net/Gym?retryWrites=true&w=majority";
 const port = process.env.PORT || 5000;
 
 app.use(bodyparser.json());
@@ -41,6 +40,7 @@ app.use("/workoutDetail", workoutDetailRoutes);
 app.use("/bodyparts", bodyPartsRoutes);
 app.use("/summary", summaryRoutes);
 app.use("/user", userRoutes);
+app.use("/program", programRoutes);
 
 app.listen(port, () => {
   // db.con.connect(function (err) {
