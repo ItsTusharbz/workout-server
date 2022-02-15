@@ -41,10 +41,10 @@ const prepareSummaryData = (data) => {
   const detail = [];
   let i = 0;
   const idArray = data.id.split(",");
-  const repsArray = data.reps?.split(",");
-  const weightArray = data.weight?.split(",");
-  const durationArray = data.duration?.split(",");
-  const statusArray = data.status?.split(",");
+  const repsArray = data.reps ? data.reps.split(",") : [];
+  const weightArray = data.weight ? data.weight.split(",") : [];
+  const durationArray = data.duration ? data.duration.split(",") : [];
+  const statusArray = data.status ? data.status.split(",") : [];
   while (i < idArray.length) {
     detail.push({
       id: idArray[i] ? idArray[i] : null,
