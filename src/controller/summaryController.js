@@ -85,5 +85,21 @@ const getHistorySummary = (req, res, next) => {
   });
 };
 
+const getProgramsSummary = async (req, res, next) => {
+  const programId = req.params.pId;
+  const { id } = req.user;
+  console.log(programId);
+  const sqlquery = `Select pd.bodyPartId,pd.workoutId,pwd.weight,pwd.repetition as reps,pwd.duration from programWorkoutDetail as pwd JOIN programDetail as pd ON pwd.programDetail_Id = pd.id where pwd.userId = ? and pwd.programId = ?`;
+  con.query(sqlquery, [id, programId], (err, result) => {
+    if (err) {
+      const error = new HttpError(err, 500);
+      return next(error);
+    } else {
+      res.send(exportData(result));
+    }
+  });
+};
+
 exports.getSummaryByDate = getSummaryByDate;
 exports.getHistorySummary = getHistorySummary;
+exports.getProgramsSummary = getProgramsSummary;
