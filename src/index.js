@@ -25,6 +25,7 @@ app.get("/", (req, res, next) => {
 });
 require("./Auth/auth");
 
+
 app.post(
   "/register",
   userController.Register
@@ -43,8 +44,5 @@ app.use("/user", userRoutes);
 app.use("/program", programRoutes);
 
 app.listen(port, () => {
-  // db.con.connect(function (err) {
-  //   if (err) console.log("eerr"err)
-  //   console.log("Connected!");
-  // });
+  console.log("application running on", "http://www.localhost:5000")
 });

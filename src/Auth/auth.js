@@ -40,6 +40,7 @@ passport.use(
   new localStrategy(async (username, password, done) => {
     try {
       const user = await userController.fetchUserByUsername(username);
+      console.log({user});
       try {
         if (!Object.entries(user).length) {
           return done(null, false, { message: "User not found" });
@@ -55,6 +56,7 @@ passport.use(
         return done(error);
       }
     } catch (error) {
+      console.log("error",error);
       return done(error);
     }
   })

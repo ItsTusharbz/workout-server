@@ -21,7 +21,7 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "mongoose": "^6.0.11",
-    "mysql": "^2.18.1",
+    "mysql2": "^3.6.1",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0"
@@ -30,6 +30,6 @@
     "nodemon": "^2.0.13"
   },
   "engines": {
-    "node": "12.14.1"
+    "node": "v18.17.0"
   }
 }
