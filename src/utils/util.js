@@ -34,9 +34,6 @@ const getToday = () => {
   return moment().format("L");
 };
 
-// convert {reps:"12,32",weight:"21,23",duration:"24,54"} =
-// [{reps:"1",weight:"21",duration:"24"},{reps:"32",weight:"23",duration:"54"}]
-
 const prepareSummaryData = (data) => {
   const detail = [];
   let i = 0;
