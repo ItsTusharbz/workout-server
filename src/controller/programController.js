@@ -77,7 +77,30 @@ const deleteProgram = async (req, res, next) => {
 };
 
 
+// fetch all workouts attached to program
+const getProgramDetail = async (req, res, next) => {
+  const { pid } = req.params;
+  const { id } = req.user;
+  try{
+    const result = await client.program.findFirst({
+      where: {
+        userId: id,
+        id: parseInt(pid)        
+      },
+      include:{
+        wokrouts:true
+      }
+    });
+  res.send(exportData(result));
+  }catch(err){
+    const error = new HttpError(err, 500);
+    return next(error);
+  }
+};
+
+
 exports.UpdateProgram = UpdateProgram;
 exports.saveProgram = saveProgram;
 exports.getPrograms = getPrograms;
+exports.getProgramDetail = getProgramDetail;
 exports.deleteProgram = deleteProgram;

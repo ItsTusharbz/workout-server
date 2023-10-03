@@ -35,45 +35,29 @@ model users {
   status    Status
   createdOn DateTime @db.Date @default(now()) 
 }
-
-
-model programDetail {
-  id          Int      @id @default(autoincrement())
-  programId   Int     
-  bodyPartsId Int
-  workoutId   Int
-  userId      Int
-  createdOn   DateTime @default(now())
+model bodyParts {
+  id                Int      @id @default(autoincrement())
+  name              String
+  createdOn         DateTime  @default(now())
 }
 
 model program {
   id        Int      @id @default(autoincrement())
   name      String
   userId    Int
+  wokrouts  workout[]
   createdOn DateTime @default(now())
   status    Status   @default(Active)
 }
 
-model programWorkoutDetail {
-  id                Int      @id @default(autoincrement())
-  programId         Int      @db.MediumInt() 
-  programDetail_Id  Int
-  weight            Int
-  repetition        Int
-  duration          Int
-  userId            Int
-  createdOn         DateTime  @default(now())
-}
-
-model workoutDetails{
-  id                Int      @id @default(autoincrement())
-  workoutId         Int       
-  reps              Int
-  weight            Int
-  duration          Int
-  createdOn         DateTime  @default(now())
-  userId            Int
-  status            Status
+model workout {
+  id          Int      @id @default(autoincrement())
+  name        String
+  programId   Int
+  programs    program  @relation(fields: [programId], references: [id])
+  userId      Int
+  exercise    workoutExerciseRelation[]
+  createdOn   DateTime  @default(now())
 }
 
 model exercise {
@@ -85,17 +69,14 @@ model exercise {
   createdOn         DateTime  @default(now())
 }
 
-model workout {
-  id          Int      @id @default(autoincrement())
-  name        String
-  programId   Int
-  userId      Int
-  createdOn   DateTime  @default(now())
-}
-
-model bodyParts {
+model workoutExerciseRelation {
   id                Int      @id @default(autoincrement())
-  name              String
+  exerciseId        Int
+  workouts          workout  @relation(fields: [workoutId], references: [id])
+  workoutId         Int
+  weight            Int      @default(0)
+  repetition        Int      @default(0)
+  time              Int
+  isDone            Boolean
   createdOn         DateTime  @default(now())
-  
 }

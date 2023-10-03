@@ -6,6 +6,7 @@ Router.post("/", programController.saveProgram);
 // Router.post("/:pId", programController.saveProgramDetail);
 // Router.get("/:pId", programController.getProgramDetail);
 Router.get("/", programController.getPrograms);
+Router.get("/:pid", programController.getProgramDetail);
 Router.patch("/:pId", programController.UpdateProgram);
 Router.delete("/:pId", programController.deleteProgram);
 
