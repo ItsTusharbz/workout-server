@@ -2,73 +2,84 @@ const { Workout } = require("../model/workoutModel");
 const HttpError = require("../model/httpError");
 const { exportData, exportError } = require("../utils/util");
 const { con } = require("../utils/db");
+const { PrismaClient } = require("@prisma/client");
 
-const getWorkouts = async (req, res, next) => {
-  const { bodyPartId } = req.params;
+const client = new PrismaClient();
+
+const getWorkoutDetail = async (req, res, next) => {
   const { id } = req.user;
-  const sqlquery =
-    "SELECT * FROM `workouts` where (origin = ? or userId =?) and bodyPartId=?";
-    con.query(sqlquery, ["system", id, bodyPartId], (err, result) => {
-    if (err) {
-      const error = new HttpError(err, 500);
-      return next(error);
-    } else {
-      res.send(exportData(result));
-    }
-  });
+  const {wid} = req.params;
+  try{
+    const exerciseList = await client.workoutExerciseRelation.findMany({
+      where: {
+        workoutId : parseInt(wid),
+        
+      },
+      orderBy: {
+        createdOn: "asc"
+      }
+    })
+  res.send(exportData(exerciseList));
+  }catch(err){
+    const error = new HttpError(err, 500);
+    return next(error);
+  }
 };
 
 const addWorkout = async (req, res, next) => {
-  const { name, bodyPartId } = req.body;
+  const { pid } = req.params;
+  const { name } = req.body;
   const { id } = req.user;
-  const origin = "user";
-  const existisQuery = "Select * from workouts where name = ? ";
-  con.query(existisQuery, [name], (err, result) => {
-    console.log(result);
-    if (!result.length) {
-      const sqlquery = `Insert into workouts (name,bodyPartId,userId, origin) values (?,?,?,?)`;
-      con.query(sqlquery, [name, bodyPartId, id, origin], (err, result) => {
-        if (err) {
-          const error = new HttpError(err, 500);
-          return next(error);
-        } else {
-          res.send(exportData("workout added successfully"));
-        }
-      });
-    } else {
-      res.send(exportError("workout already exists", 400));
-    }
-  });
+  try{
+    await client.workout.create({
+      data: {
+        name,
+        programId: parseInt(pid),
+        userId: id,
+      }
+    })
+    res.send(exportData("Workout added successfully"));
+  }catch(err){
+    const error = new HttpError(err, 500);
+      return next(error);
+  }
 };
 
 const removeWorkout = async (req, res, next) => {
   const id = req.params.wid;
-  const sqlquery = "DELETE FROM workouts WHERE id = ?";
-  con.query(sqlquery, [id], (err, result) => {
-    if (err) {
-      const error = new HttpError(err, 500);
-      return next(error);
-    } else {
-      res.send(exportData(result));
-    }
-  });
+  try{
+    await client.workout.delete({
+      where:{
+        id: wid
+      }
+    })
+    return next(error);
+  }catch(err){
+    res.send(exportData(result));
+    const error = new HttpError(err, 500);
+  }
 };
 
 const updateWorkout = async (req, res, next) => {
   const { name } = req.body;
-  const id = req.params.wid;
-  const sqlquery = "UPDATE workouts SET name = ? where id = ?";
-  con.query(sqlquery, [name, id], (err, result) => {
-    if (err) {
-      const error = new HttpError(err, 500);
-      return next(error);
-    } else {
-      res.send(exportData(result));
-    }
-  });
+  const { wid } = req.params;
+  try{
+    await client.workout.update({
+      where:{
+        id: parseInt(wid)
+      },
+      data: {
+        name
+      }
+    })
+    res.send(exportData("Workout is updated successfully"));
+  }catch(err){
+    const error = new HttpError(err, 500);
+    return next(error);
+  }
 };
 
-exports.getWorkouts = getWorkouts;
+exports.getWorkoutDetail = getWorkoutDetail;
 exports.addWorkout = addWorkout;
 exports.updateWorkout = updateWorkout;
 exports.removeWorkout = removeWorkout;

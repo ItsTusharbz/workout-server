@@ -3,9 +3,9 @@ const Router = express.Router();
 
 const workoutController = require("../controller/workoutController")
 
-Router.get("/:bodyPartId", workoutController.getWorkouts);
-Router.post("/", workoutController.addWorkout);
-Router.put("/:wid", workoutController.updateWorkout);
-Router.delete("/:wid", workoutController.removeWorkout);
+Router.get("/:wid", workoutController.getWorkoutDetail);
+Router.post("/:pid", workoutController.addWorkout);
+Router.patch("/:wid", workoutController.updateWorkout);
+Router.delete("/:pid/:wid", workoutController.removeWorkout);
 
 module.exports = Router;
