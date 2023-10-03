@@ -4,8 +4,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const workoutRoutes = require("./routes/workoutRoutes");
-const dayRoutes = require("./routes/dayRoutes");
-const weekRoutes = require("./routes/weekRoutes");
 const workoutDetailRoutes = require("./routes/workoutDetailRoutes");
 const bodyPartsRoutes = require("./routes/bodyPartsRoutes");
 const summaryRoutes = require("./routes/summaryRoute");
@@ -35,8 +33,6 @@ app.post("/login", userController.Login);
 app.use(passport.authenticate("jwt", { session: false }));
 
 app.use("/workout", workoutRoutes);
-app.use("/day", dayRoutes);
-app.use("/week", weekRoutes);
 app.use("/workoutDetail", workoutDetailRoutes);
 app.use("/bodyparts", bodyPartsRoutes);
 app.use("/summary", summaryRoutes);

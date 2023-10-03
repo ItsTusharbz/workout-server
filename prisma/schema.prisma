@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("CONNECTION_URL")
+  shadowDatabaseUrl = env("SHOWDOW_DB_URL")
+}
+
+enum Status {
+    Active
+    Inactive
+    Pending
+  }
+  
+  enum Origin {
+    User
+    System
+  }
+  
+
+model users {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String   @db.VarChar(20)
+  username  String   @db.VarChar(255)
+  contact   Int  
+  password  String   @db.VarChar(200)
+  address   String   @db.VarChar(200)
+  isAdmin   Boolean   
+  status    Status
+  createdOn DateTime @db.Date @default(now()) 
+}
+
+
+model programDetail {
+  id          Int      @id @default(autoincrement())
+  programId   Int     
+  bodyPartsId Int
+  workoutId   Int
+  userId      Int
+  createdOn   DateTime @default(now())
+}
+
+model program {
+  id        Int      @id @default(autoincrement())
+  name      String
+  userId    Int
+  createdOn DateTime @default(now())
+  status    Status   @default(Active)
+}
+
+model programWorkoutDetail {
+  id                Int      @id @default(autoincrement())
+  programId         Int      @db.MediumInt() 
+  programDetail_Id  Int
+  weight            Int
+  repetition        Int
+  duration          Int
+  userId            Int
+  createdOn         DateTime  @default(now())
+}
+
+model workoutDetails{
+  id                Int      @id @default(autoincrement())
+  workoutId         Int       
+  reps              Int
+  weight            Int
+  duration          Int
+  createdOn         DateTime  @default(now())
+  userId            Int
+  status            Status
+}
+
+model exercise {
+  id                Int      @id @default(autoincrement())
+  name              String
+  bodyPartId        Int
+  userId            Int
+  origin            Origin
+  createdOn         DateTime  @default(now())
+}
+
+model workout {
+  id          Int      @id @default(autoincrement())
+  name        String
+  programId   Int
+  userId      Int
+  createdOn   DateTime  @default(now())
+}
+
+model bodyParts {
+  id                Int      @id @default(autoincrement())
+  name              String
+  createdOn         DateTime  @default(now())
+  
+}
